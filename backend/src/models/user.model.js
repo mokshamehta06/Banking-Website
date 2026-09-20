@@ -2,38 +2,38 @@ const mongoose = require("mongoose")
 const bcrypt = require("bcryptjs")
 
 const userSchema =new mongoose.Schema({
-    email:{
-        type:String,
-        require:true,
-        unique:true,
-        trim:true,
-        lowercase:true,
-        match:[/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-            ,"invalid email"
+    email: {
+        type: String,
+        required: [true, "Email is required"],
+        unique: true,
+        trim: true,
+        lowercase: true,
+        match: [
+            /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+            "Invalid email address"
         ]
     },
-    name:{
-        type:String,
-        required:[true,"Name is required for creating an accoutn"]
+    name: {
+        type: String,
+        required: [true, "Name is required"]
     },
-    password:{
-        type:String,
-        required:[true,"Password is required for creating an accoutn"],
-        minlength:[6,"password should contain more that 6 charcter"],
-        select:false
+    password: {
+        type: String,
+        required: [true, "Password is required"],
+        minlength: [6, "Password must be at least 6 characters long"],
+        select: false
     }
 },{
     timestamps:true
 })
 
-userSchema.pre("save",async function(next){
-    if(!this.isModified("password")){
-        return next()
+userSchema.pre("save", async function () {
+    if (!this.isModified("password")) {
+        return;
     }
-    const hash = await bcrypt.hash(this.password,10)
-    this.password = hash
-    return next()
-})
+    const hash = await bcrypt.hash(this.password, 10);
+    this.password = hash;
+});
 
 userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password,this.password)
