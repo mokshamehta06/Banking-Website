@@ -9,8 +9,9 @@ const accountSchema = new mongoose.Schema({
         index:true
     },
     status:{
-        enum:["ACTIVE","FROZEN","CLOSED"],
-        message:"Please provide a valid account status"
+        type: String,
+        enum: ["ACTIVE", "FROZEN", "CLOSED"],
+        default: "ACTIVE"
     },
     currency:{
         type:String,
